@@ -1,16 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options
 from time import sleep
-import random
 from selenium.webdriver.support.ui import Select
-
-
-# Gerar um número inteiro aleatório entre 5 e 20 (inclusive) com passo de 2
-random_int_with_step = random.randrange(5, 21, 2)
-print("Número inteiro aleatório com passo:", random_int_with_step)
 
 # Definir o novo user-agent que você deseja utilizar
 new_user_agent = "Mozilla/5.0 (Windows NT 11.0; Win34; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/80.0.3987.87 Safari/537.36"
@@ -68,24 +63,44 @@ def open_config():
         print("Botão de confirmação de risco, encontrado.")
         btn_AceitarRisco.click()
         sleep(2)
-
-        btn_MostrarTudo = driver.find_element(By.CSS_SELECTOR, "#show-all")
-
-        btn_MostrarTudo.click()
-
-        sleep(5)
-
-        # Necessário analisar todos as configuração para entender oque cada um faz.
-        # E configurar somente as partes necessárias
-
     except:
-        
         pass
 
+    btn_MostrarTudo = driver.find_element(By.CSS_SELECTOR, "#show-all")
+    btn_MostrarTudo.click()
 
+    sleep(2)
+
+    # Realizar busca por palavra-chave
+    input_busca = driver.find_element(By.CSS_SELECTOR, "#about-config-search")
+    input_busca.send_keys('FingerPrint')
+
+    # Simular a pressão da tecla Enter
+    input_busca.send_keys(Keys.ENTER)
+    
+    sleep(3)
+
+    fingerprintingProtection = driver.find_element(By.CSS_SELECTOR, "#prefs > tr:nth-child(3959)").text.strip()
+    
+    valor_configuracao = fingerprintingProtection.split()[-1]
+    print(f'Valor Configuração: {valor_configuracao}')
+
+    if valor_configuracao == 'false':
+
+        print('Alterando a configuração do fingerprintingProtection para true ')
+        button_alterar = driver.find_element(By.CSS_SELECTOR, "#prefs > tr:nth-child(3959) > td:nth-child(3) > button:nth-child(1)")
+        button_alterar.click()
+
+    privacyFingerPrintingProtectionPbmode = driver.find_element(By.CSS_SELECTOR, "#prefs > tr:nth-child(3977)").text.split()
+
+    valor_configuracao = privacyFingerPrintingProtectionPbmode.split()[-1]
+
+    if valor_configuracao == 'false':
+
+        print("Necessário alterar config")
+        
 # Iniciando Função de ajuste da pagina config
 open_config()
-
 
 # Encerrar o navegador
 driver.quit()
