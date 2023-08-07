@@ -8,8 +8,8 @@ from time import sleep
 from selenium.webdriver.support.ui import Select
 
 # Definir o novo user-agent que você deseja utilizar
-new_user_agent = "Mozilla/5.0 (Windows NT 11.0; Win34; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/80.0.3987.87 Safari/537.36"
-# new_user_agent = ""
+#new_user_agent = "Mozilla/5.0 (Windows NT 11.0; Win34; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/80.0.3987.87 Safari/537.36"
+new_user_agent = ""
 
 # Definir as opções do navegador Firefox com o user-agent personalizado
 options = Options()
@@ -61,6 +61,7 @@ def open_config():
         # Verificação do Botao de Aceitar Risco do FireFox
         btn_AceitarRisco = driver.find_element(By.CSS_SELECTOR, "#warningButton")
         print("Botão de confirmação de risco, encontrado.")
+        
         btn_AceitarRisco.click()
         sleep(2)
     except:
@@ -78,29 +79,43 @@ def open_config():
     # Simular a pressão da tecla Enter
     input_busca.send_keys(Keys.ENTER)
     
-    sleep(3)
+    sleep(5)
 
     fingerprintingProtection = driver.find_element(By.CSS_SELECTOR, "#prefs > tr:nth-child(3959)").text.strip()
-    
     valor_configuracao = fingerprintingProtection.split()[-1]
-    print(f'Valor Configuração: {valor_configuracao}')
 
     if valor_configuracao == 'false':
-
-        print('Alterando a configuração do fingerprintingProtection para true ')
+        
         button_alterar = driver.find_element(By.CSS_SELECTOR, "#prefs > tr:nth-child(3959) > td:nth-child(3) > button:nth-child(1)")
         button_alterar.click()
 
-    privacyFingerPrintingProtectionPbmode = driver.find_element(By.CSS_SELECTOR, "#prefs > tr:nth-child(3977)").text.split()
+    resistFingerprintng = driver.find_element(By.CSS_SELECTOR, "tr.odd:nth-child(3994)").text.strip()
 
-    valor_configuracao = privacyFingerPrintingProtectionPbmode.split()[-1]
+    valor_configuracao_resist = resistFingerprintng.split()[-1]
 
-    if valor_configuracao == 'false':
+    if valor_configuracao_resist == 'false':
 
-        print("Necessário alterar config")
-        
+        print(f'Necessario ajustar o {resistFingerprintng}')
+        btn_configuracao_resist =  driver.find_element(By.CSS_SELECTOR,'tr.odd:nth-child(3994) > td:nth-child(3) > button:nth-child(1)').click()
+
+    canvas = driver.find_element(By.CSS_SELECTOR, "tr.odd:nth-child(3996)").text.strip()
+    valor_canvas = canvas.split()[-1]
+
+    if valor_canvas == 'false':
+
+        btn_configuracao_canvas = driver.find_element(By.CSS_SELECTOR, "tr.odd:nth-child(4000)").click()
+
+
+def visualizando_fingerprint():
+
+    url = "https://amiunique.org/fingerprint"
+
+    driver.get(url)
+    print('Abriu o site de verificação do FingerPrint')
+
 # Iniciando Função de ajuste da pagina config
 open_config()
+visualizando_fingerprint()
 
 # Encerrar o navegador
 driver.quit()
